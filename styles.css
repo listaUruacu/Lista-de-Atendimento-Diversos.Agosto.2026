@@ -70,6 +70,30 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 5px; font-family: Georgia, serif; font-size: clamp(29px, 5vw, 42px); font-weight: 500; }
 .subtitle { margin-bottom: 0; color: var(--muted); }
 
+.update-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 11px 0 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(46, 107, 87, .16);
+  border-radius: 999px;
+  color: var(--green-700);
+  background: rgba(232, 240, 236, .78);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.update-badge time { font-weight: 800; }
+
+.update-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(189, 155, 85, .16);
+}
+
 .search-panel {
   padding: clamp(22px, 4vw, 34px);
   border: 1px solid rgba(24, 63, 50, 0.09);
