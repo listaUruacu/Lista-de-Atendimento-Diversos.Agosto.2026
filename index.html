@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183f32">
+  <meta name="description" content="Consulta da Agenda Regional Uruaçu por data, responsável ou cidade.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Agenda Uruaçu">
+  <title>Agenda Regional Uruaçu</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero-mark" aria-hidden="true">AU</div>
+      <div>
+        <p class="eyebrow">Congregação Cristã no Brasil</p>
+        <h1>Agenda Regional Uruaçu</h1>
+        <p class="subtitle">Consulte por data, responsável ou cidade.</p>
+      </div>
+    </header>
+
+    <section class="search-panel" aria-labelledby="search-title">
+      <div class="panel-heading">
+        <div>
+          <p class="step-label">CONSULTA</p>
+          <h2 id="search-title">Como você deseja consultar?</h2>
+        </div>
+        <span class="database-badge"><strong id="event-total">53</strong> registros</span>
+      </div>
+
+      <div class="search-modes" role="group" aria-label="Tipo de consulta">
+        <button type="button" class="mode-button is-active" data-mode="date" aria-pressed="true">
+          <span aria-hidden="true">▦</span> Por data
+        </button>
+        <button type="button" class="mode-button" data-mode="elder" aria-pressed="false">
+          <span aria-hidden="true">♙</span> Por ancião
+        </button>
+        <button type="button" class="mode-button" data-mode="worker" aria-pressed="false">
+          <span aria-hidden="true">♧</span> Por encarregado
+        </button>
+        <button type="button" class="mode-button" data-mode="deacon" aria-pressed="false">
+          <span aria-hidden="true">♢</span> Por diácono
+        </button>
+        <button type="button" class="mode-button" data-mode="city" aria-pressed="false">
+          <span aria-hidden="true">⌖</span> Por cidade
+        </button>
+      </div>
+
+      <form id="date-form" class="date-form">
+        <label for="event-date">Data do evento</label>
+        <div class="date-controls">
+          <input id="event-date" name="event-date" type="date" min="2026-08-08" max="2026-10-18" required>
+          <button class="primary-button" type="submit">
+            <span aria-hidden="true">⌕</span> Consultar
+          </button>
+        </div>
+      </form>
+
+      <form id="person-form" class="date-form" hidden>
+        <label id="person-label" for="person-name">Nome</label>
+        <div class="date-controls">
+          <select id="person-name" name="person-name" required>
+            <option value="">Selecione um nome</option>
+          </select>
+          <button class="primary-button" type="submit">
+            <span aria-hidden="true">⌕</span> Buscar atendimentos
+          </button>
+        </div>
+      </form>
+
+      <form id="city-form" class="date-form" hidden>
+        <label for="city-name">Cidade ou localidade</label>
+        <div class="date-controls">
+          <select id="city-name" name="city-name" required>
+            <option value="">Selecione uma cidade</option>
+          </select>
+          <button class="primary-button" type="submit">
+            <span aria-hidden="true">⌕</span> Buscar eventos
+          </button>
+        </div>
+      </form>
+
+      <div id="date-actions" class="quick-actions" aria-label="Atalhos de navegação">
+        <button type="button" data-shift="-1">← Dia anterior</button>
+        <button type="button" id="today-button">Hoje</button>
+        <button type="button" data-shift="1">Próximo dia →</button>
+        <button type="button" id="clear-button">Limpar</button>
+      </div>
+    </section>
+
+    <section id="results" class="results" aria-live="polite"></section>
+
+    <footer>
+      <p>Dados da Lista de Atendimentos Diversos — reunião de 8 de agosto de 2026.</p>
+      <p>Período disponível: 08/08/2026 a 18/10/2026.</p>
+    </footer>
+  </main>
+
+  <script src="events.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
+    }
+  </script>
+</body>
+</html>

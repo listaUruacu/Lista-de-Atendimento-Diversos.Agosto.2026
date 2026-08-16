@@ -1,0 +1,29 @@
+AGENDA REGIONAL URUAÇU
+
+COMO ABRIR
+1. Dê dois cliques no arquivo "Iniciar Aplicativo.bat".
+2. O aplicativo abrirá no navegador padrão.
+3. Escolha a consulta por data, ancião, encarregado, diácono ou cidade.
+4. Informe a data ou selecione uma das opções e faça a consulta.
+
+O aplicativo funciona sem internet e não exige instalação.
+
+COMO PUBLICAR E INSTALAR NO CELULAR
+1. Publique esta pasta em um serviço de site estático com HTTPS (por exemplo,
+   GitHub Pages, Cloudflare Pages, Netlify ou Vercel).
+2. Abra o endereço publicado no Chrome do celular.
+3. No menu do Chrome, toque em "Adicionar à tela inicial" ou "Instalar app".
+4. Depois da primeira abertura, o aplicativo também funciona sem internet.
+
+Importante: abrir os arquivos diretamente no celular não ativa a instalação e o
+modo offline. O endereço precisa estar publicado com HTTPS.
+
+DADOS
+- Fonte: Lista de Atendimentos Diversos, reunião de 08/08/2026.
+- Período: 08/08/2026 a 18/10/2026.
+- Foram incluídos eventos das tabelas e avisos com datas específicas.
+- Quando o PDF não informa um horário, o aplicativo exibe "não informado".
+- O PDF atual não informa nomes de diáconos; o filtro fica preparado para futuras listas.
+
+Para atualizar a programação no futuro, substitua ou acrescente registros no
+arquivo events.js seguindo o mesmo formato dos registros existentes.
