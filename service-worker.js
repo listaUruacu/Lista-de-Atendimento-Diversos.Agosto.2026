@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agenda-uruacu-v1';
+const CACHE_NAME = 'agenda-uruacu-v2';
 const APP_FILES = [
   './',
   './index.html',
@@ -6,9 +6,9 @@ const APP_FILES = [
   './events.js',
   './app.js',
   './manifest.webmanifest',
-  './icons/icon.svg',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icon.svg',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', event => {
