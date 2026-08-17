@@ -189,7 +189,7 @@
 
   function setUrlFilter(mode, value) {
     const url = new URL(window.location.href);
-    ['data', 'pessoa', 'funcao', 'cidade', 'assunto', 'busca'].forEach(param => url.searchParams.delete(param));
+    ['data', 'pessoa', 'funcao', 'cidade', 'assunto', 'busca', 'avisos'].forEach(param => url.searchParams.delete(param));
     if (mode === 'date' && value) url.searchParams.set('data', value);
     if (roleConfig[mode] && value) {
       url.searchParams.set('funcao', mode);
@@ -198,6 +198,7 @@
     if (mode === 'city' && value) url.searchParams.set('cidade', value);
     if (mode === 'subject' && value) url.searchParams.set('assunto', value);
     if (mode === 'search' && value) url.searchParams.set('busca', value);
+    if (mode === 'notice' && value) url.searchParams.set('avisos', '1');
     try {
       history.replaceState(null, '', url);
     } catch (_) {
@@ -206,7 +207,7 @@
   }
 
   function setMode(mode, render = true, selected = '') {
-    currentMode = mode === 'date' || mode === 'city' || mode === 'subject' || roleConfig[mode] ? mode : 'date';
+    currentMode = mode === 'date' || mode === 'city' || mode === 'subject' || mode === 'notice' || roleConfig[mode] ? mode : 'date';
     const isDate = currentMode === 'date';
     const isCity = currentMode === 'city';
     const isSubject = currentMode === 'subject';
@@ -229,7 +230,8 @@
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    if (render) renderWelcome();
+    if (render && currentMode === 'notice') renderNotice();
+    else if (render) renderWelcome();
   }
 
   function renderDate(value, scroll = false) {
@@ -279,6 +281,14 @@
       button.setAttribute('aria-pressed', String(active));
     });
     results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA POR ASSUNTO</span><h2>${escapeHtml(subject)}</h2><p>Eventos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderNotice(scroll = false) {
+    const matches = events.filter(event => event.category === 'Avisos à irmandade');
+    setUrlFilter('notice', '1');
+    const label = matches.length === 1 ? '1 aviso' : `${matches.length} avisos`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AVISOS À IRMANDADE</span><h2>Avisos</h2><p>Comunicados em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -338,8 +348,14 @@
       return;
     }
     dateInput.value = '';
-    const distinctDates = [...new Set(events.map(event => event.date))].slice(0, 6);
-    results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">▦</div><h2>Agenda pronta para consulta</h2><p>Escolha uma data ou consulte por pessoa, localidade e assunto.</p><div class="upcoming"><h3>Primeiras datas com eventos</h3><div class="date-chips">${distinctDates.map(date => `<button class="date-chip" type="button" data-date="${date}">${formatDate(date, false)}</button>`).join('')}</div></div></div>`;
+    const distinctDates = [...new Set(events.map(event => event.date))];
+    const today = toInputDate(new Date());
+    let recentDates = distinctDates.filter(date => date <= today).slice(-3);
+    let nextDates = distinctDates.filter(date => date > today).slice(0, 3);
+    if (recentDates.length < 3) nextDates = distinctDates.filter(date => date > today).slice(0, 6 - recentDates.length);
+    if (nextDates.length < 3) recentDates = distinctDates.filter(date => date <= today).slice(-(6 - nextDates.length));
+    const nearbyDates = [...recentDates, ...nextDates];
+    results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">▦</div><h2>Agenda pronta para consulta</h2><p>Consulte por assunto, ancião, diácono, encarregado, examinadora, cidade, avisos ou data.</p><div class="upcoming"><h3>Últimas e próximas datas com eventos</h3><div class="date-chips">${nearbyDates.map(date => `<button class="date-chip" type="button" data-date="${date}">${formatDate(date, false)}</button>`).join('')}</div></div></div>`;
   }
 
   document.querySelectorAll('.mode-button').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
@@ -352,7 +368,7 @@
     if (button) renderSubject(button.dataset.subject, true);
   });
   document.querySelectorAll('[data-shift]').forEach(button => button.addEventListener('click', () => {
-    const base = parseDate(dateInput.value) || new Date(2026, 7, 8, 12);
+    const base = parseDate(dateInput.value) || new Date(2026, 7, 9, 12);
     base.setDate(base.getDate() + Number(button.dataset.shift));
     renderDate(toInputDate(base));
   }));
@@ -367,8 +383,12 @@
   const initialSubject = params.get('assunto');
   const initialDate = params.get('data');
   const initialSearch = params.get('busca');
+  const initialNotice = params.get('avisos') === '1';
   if (initialSearch && initialSearch.trim().length >= 2) {
     renderSearch(initialSearch);
+  } else if (initialNotice) {
+    setMode('notice', false);
+    renderNotice();
   } else if (roleConfig[initialRole] && namesByRole[initialRole].includes(initialPerson)) {
     setMode(initialRole, false, initialPerson);
     renderPerson(initialRole, initialPerson);

@@ -1,5 +1,5 @@
 window.EVENTS = [
-  {date:'2026-08-08',time:'19:00',category:'Batismos',location:'Amaralina - Central',detail:'Ancião: Genivaldo Ferreira'},
+  {date:'2026-08-29',time:'19:00',category:'Batismos',location:'Amaralina - Central',detail:'Ancião: Genivaldo Ferreira'},
   {date:'2026-08-09',time:'',category:'Viagens missionárias',location:'Campos Verdes - Central',detail:'Enc.: David Corrêa; Enc.: Manoel Messias'},
   {date:'2026-08-15',time:'19:00',category:'Reuniões para mocidade',location:'Santa Terezinha de Goiás - Central',detail:'Culto para jovens — Ancião: Ismael Zanelato'},
   {date:'2026-08-16',time:'09:00',category:'Ensaios regionais',location:'Alto Horizonte - Central',detail:'Anc.: Gideonir Teixeira; Enc.: Emanoel Siqueira; Enc.: Moyses Rosa'},

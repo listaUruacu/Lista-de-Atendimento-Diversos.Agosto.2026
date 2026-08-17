@@ -147,7 +147,7 @@ h1 { margin-bottom: 5px; font-family: Georgia, serif; font-size: clamp(29px, 5vw
   box-shadow: 0 5px 12px rgba(24, 63, 50, .18);
 }
 
-.date-mode-slot { display: contents; }
+.utility-mode-row { display: contents; }
 
 .date-form label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
 .date-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
@@ -313,7 +313,7 @@ select { cursor: pointer; }
 .empty-state p, .welcome-state p { max-width: 560px; margin: 0 auto; }
 
 .upcoming { margin-top: 22px; text-align: left; }
-.upcoming h3 { margin-bottom: 10px; color: var(--ink); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
+.upcoming h3 { margin-bottom: 10px; color: var(--ink); font-size: 13px; text-align: center; text-transform: uppercase; letter-spacing: .08em; }
 .date-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .date-chip { padding: 8px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--green-900); background: #fff; font-weight: 700; }
 
@@ -359,14 +359,16 @@ footer p { margin: 0; }
     white-space: nowrap;
   }
 
-  .date-mode-slot {
+  .utility-mode-row {
     display: flex;
+    flex-wrap: wrap;
     grid-column: 1 / -1;
     justify-content: center;
+    gap: 8px;
     width: 100%;
   }
 
-
+  .mode-button[data-mode="notice"] { width: 112px; }
   .mode-button[data-mode="date"] { width: 160px; }
 
   .date-form label, .subject-label, .keyword-form label { margin-bottom: 10px; text-align: center; }
