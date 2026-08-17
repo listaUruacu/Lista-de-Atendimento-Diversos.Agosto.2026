@@ -244,7 +244,7 @@
       results.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">✓</div><h2>Nenhum evento nesta data</h2><p>Não há registros para ${escapeHtml(readableDate)}. Use os botões de navegação para consultar outro dia.</p></div>`;
     } else {
       const label = matches.length === 1 ? '1 evento encontrado' : `${matches.length} eventos encontrados`;
-      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada no documento</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada na lista</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
     }
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -341,13 +341,13 @@
       const count = namesByRole[currentMode].length;
       const title = count ? `Consulte a agenda de ${config.article} ${config.singular}` : `${config.none} ${config.singular} ${config.named}`;
       const message = count
-        ? `Selecione ${config.selection} ${count} ${config.plural} ${config.found} no documento para ver todos os seus atendimentos.`
+        ? `Selecione ${config.selection} ${count} ${config.plural} ${config.found} na lista para ver todos os seus atendimentos.`
         : `O documento atual menciona a função, mas não informa nomes de ${config.plural}. O filtro já está preparado para futuras listas.`;
       results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">${config.icon}</div><h2>${title}</h2><p>${message}</p>${nearbyDatesHtml()}</div>`;
       return;
     }
     if (currentMode === 'city') {
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">⌖</div><h2>Consulte por cidade</h2><p>Selecione uma das ${cities.length} cidades ou localidades identificadas no documento.</p>${nearbyDatesHtml()}</div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">⌖</div><h2>Consulte por cidade</h2><p>Selecione uma das ${cities.length} cidades ou localidades identificadas na lista.</p>${nearbyDatesHtml()}</div>`;
       return;
     }
     if (currentMode === 'subject') {
