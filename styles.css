@@ -334,7 +334,7 @@ footer p { margin: 0; }
 
   .search-modes {
     display: grid;
-    grid-template-columns: 1.08fr .96fr .96fr;
+    grid-template-columns: 1.15fr .925fr .925fr;
     width: 100%;
     gap: 6px;
     margin-bottom: 24px;
@@ -344,7 +344,7 @@ footer p { margin: 0; }
   .mode-button {
     min-height: 44px;
     padding: 9px 3px;
-    font-size: 13px;
+    font-size: 14px;
     white-space: nowrap;
   }
 
@@ -358,7 +358,9 @@ footer p { margin: 0; }
   .results-heading { display: block; margin-bottom: 14px; text-align: center; }
   .results-heading h2 { font-size: 25px; }
   .count-pill { display: inline-block; margin-top: 8px; }
-  .event-card { grid-template-columns: 82px minmax(0, 1fr); }
+  .event-card { grid-template-columns: 96px minmax(0, 1fr); }
+  .event-time { padding-inline: 6px; }
+  .event-time .event-weekday { letter-spacing: .03em; }
   .event-content { padding: 17px 16px; }
   .event-time { min-height: 146px; }
   footer { display: block; text-align: center; }

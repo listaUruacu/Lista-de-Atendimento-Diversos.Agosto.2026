@@ -149,20 +149,17 @@
     personSubmit.disabled = names.length === 0;
   }
 
-  function eventCard(event, showDate = false) {
-    const time = event.time || '—';
+  function eventCard(event) {
     const weekday = formatWeekday(event.date);
-    const timeLabel = event.time ? 'horário' : 'não informado';
-    const dateLine = showDate
-      ? `<p><strong>Data:</strong> ${escapeHtml(titleCaseFirst(formatDate(event.date)))}${event.time ? `, às ${escapeHtml(event.time)}` : ''}</p>`
-      : '';
+    const shortDate = formatDate(event.date, false);
+    const timeLabel = event.time ? `${event.time} h` : 'sem horário';
     return `
       <article class="event-card">
-        <div class="event-time"><span class="event-weekday">${escapeHtml(weekday)}</span><strong>${escapeHtml(time)}</strong><span>${escapeHtml(timeLabel)}</span></div>
+        <div class="event-time"><span class="event-weekday">${escapeHtml(weekday)}</span><strong>${escapeHtml(shortDate)}</strong><span>${escapeHtml(timeLabel)}</span></div>
         <div class="event-content">
           <span class="event-category">${escapeHtml(event.category)}</span>
           <h3>${escapeHtml(event.location)}</h3>
-          <div class="event-meta">${dateLine}<p><strong>Informações:</strong> ${escapeHtml(event.detail)}</p></div>
+          <div class="event-meta"><p><strong>Informações:</strong> ${escapeHtml(event.detail)}</p></div>
         </div>
       </article>`;
   }
@@ -232,7 +229,7 @@
     setUrlFilter(mode, name);
     const matches = events.filter(event => extractNames(event.detail, mode).includes(name));
     const label = matches.length === 1 ? '1 atendimento' : `${matches.length} atendimentos`;
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">${config.heading}</span><h2>${escapeHtml(name)}</h2><p>Atendimentos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event, true)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">${config.heading}</span><h2>${escapeHtml(name)}</h2><p>Atendimentos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -242,7 +239,7 @@
     setUrlFilter('city', city);
     const matches = events.filter(event => cityFor(event) === city || cityFor(event) === null);
     const label = matches.length === 1 ? '1 evento' : `${matches.length} eventos`;
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA DA LOCALIDADE</span><h2>${escapeHtml(city)}</h2><p>Inclui avisos destinados a toda a regional</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event, true)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA DA LOCALIDADE</span><h2>${escapeHtml(city)}</h2><p>Inclui avisos destinados a toda a regional</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -256,7 +253,7 @@
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA POR ASSUNTO</span><h2>${escapeHtml(subject)}</h2><p>Eventos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event, true)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA POR ASSUNTO</span><h2>${escapeHtml(subject)}</h2><p>Eventos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
