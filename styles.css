@@ -150,7 +150,7 @@ h1 { margin-bottom: 5px; font-family: Georgia, serif; font-size: clamp(29px, 5vw
 .date-form label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
 .date-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
 
-input[type="date"], select {
+input[type="date"], input[type="search"], select {
   width: 100%;
   min-height: 54px;
   padding: 0 16px;
@@ -161,8 +161,17 @@ input[type="date"], select {
   outline: none;
 }
 
-input[type="date"]:focus, select:focus { border-color: var(--green-700); box-shadow: 0 0 0 4px rgba(46, 107, 87, .12); }
+input[type="date"]:focus, input[type="search"]:focus, select:focus { border-color: var(--green-700); box-shadow: 0 0 0 4px rgba(46, 107, 87, .12); }
 select { cursor: pointer; }
+
+.keyword-form {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.keyword-form label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
+.keyword-controls .primary-button { padding-inline: 20px; }
 
 [hidden] { display: none !important; }
 
@@ -348,8 +357,11 @@ footer p { margin: 0; }
     white-space: nowrap;
   }
 
-  .date-form label, .subject-label { margin-bottom: 10px; text-align: center; }
+  .date-form label, .subject-label, .keyword-form label { margin-bottom: 10px; text-align: center; }
   .date-controls { grid-template-columns: 1fr; }
+  .keyword-form { margin-bottom: 18px; padding-bottom: 18px; }
+  .keyword-controls { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .keyword-controls .primary-button { padding-inline: 14px; }
   .quick-actions { justify-content: center; }
   .subject-list { grid-template-columns: 1fr; gap: 9px; }
   .subject-button { min-height: 54px; padding: 13px 14px; }

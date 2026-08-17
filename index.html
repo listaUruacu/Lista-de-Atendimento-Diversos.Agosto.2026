@@ -37,6 +37,16 @@
         <span class="database-badge"><strong id="event-total">53</strong> eventos cadastrados</span>
       </div>
 
+      <form id="keyword-form" class="keyword-form" role="search">
+        <label for="keyword-search">Pesquisar em todos os eventos</label>
+        <div class="date-controls keyword-controls">
+          <input id="keyword-search" name="busca" type="search" minlength="2" placeholder="Ex.: mocidade" autocomplete="off" required>
+          <button class="primary-button" type="submit">
+            <span aria-hidden="true">⌕</span> Pesquisar
+          </button>
+        </div>
+      </form>
+
       <div class="search-modes" role="group" aria-label="Tipo de consulta">
         <button type="button" class="mode-button is-active" data-mode="subject" aria-pressed="true">
           <span aria-hidden="true">☷</span> Assunto

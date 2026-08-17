@@ -13,10 +13,12 @@
   const personForm = document.querySelector('#person-form');
   const cityForm = document.querySelector('#city-form');
   const subjectForm = document.querySelector('#subject-form');
+  const keywordForm = document.querySelector('#keyword-form');
   const dateInput = document.querySelector('#event-date');
   const personSelect = document.querySelector('#person-name');
   const citySelect = document.querySelector('#city-name');
   const subjectList = document.querySelector('#subject-list');
+  const keywordInput = document.querySelector('#keyword-search');
   const personLabel = document.querySelector('#person-label');
   const personSubmit = personForm.querySelector('button[type="submit"]');
   const dateActions = document.querySelector('#date-actions');
@@ -64,6 +66,25 @@
 
   function titleCaseFirst(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  function normalizeText(value) {
+    return String(value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('pt-BR');
+  }
+
+  function searchableEvent(event) {
+    return normalizeText([
+      event.category,
+      event.location,
+      event.detail,
+      event.date,
+      formatDate(event.date),
+      formatWeekday(event.date),
+      event.time
+    ].join(' '));
   }
 
   function extractNames(detail, mode) {
@@ -166,7 +187,7 @@
 
   function setUrlFilter(mode, value) {
     const url = new URL(window.location.href);
-    ['data', 'pessoa', 'funcao', 'cidade', 'assunto'].forEach(param => url.searchParams.delete(param));
+    ['data', 'pessoa', 'funcao', 'cidade', 'assunto', 'busca'].forEach(param => url.searchParams.delete(param));
     if (mode === 'date' && value) url.searchParams.set('data', value);
     if (roleConfig[mode] && value) {
       url.searchParams.set('funcao', mode);
@@ -174,6 +195,7 @@
     }
     if (mode === 'city' && value) url.searchParams.set('cidade', value);
     if (mode === 'subject' && value) url.searchParams.set('assunto', value);
+    if (mode === 'search' && value) url.searchParams.set('busca', value);
     try {
       history.replaceState(null, '', url);
     } catch (_) {
@@ -192,6 +214,7 @@
     personForm.hidden = !isPerson;
     cityForm.hidden = !isCity;
     subjectForm.hidden = !isSubject;
+    keywordInput.value = '';
 
     if (isPerson) {
       const config = roleConfig[currentMode];
@@ -257,6 +280,37 @@
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  function renderSearch(query, scroll = false) {
+    const cleanedQuery = query.trim();
+    if (cleanedQuery.length < 2) return;
+    const terms = normalizeText(cleanedQuery).split(/\s+/).filter(Boolean);
+    const matches = events.filter(event => {
+      const searchable = searchableEvent(event);
+      return terms.every(term => searchable.includes(term));
+    });
+
+    currentMode = 'search';
+    keywordInput.value = cleanedQuery;
+    dateForm.hidden = true;
+    dateActions.hidden = true;
+    personForm.hidden = true;
+    cityForm.hidden = true;
+    subjectForm.hidden = true;
+    document.querySelectorAll('.mode-button').forEach(button => {
+      button.classList.remove('is-active');
+      button.setAttribute('aria-pressed', 'false');
+    });
+    setUrlFilter('search', cleanedQuery);
+
+    if (!matches.length) {
+      results.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">⌕</div><h2>Nenhum evento encontrado</h2><p>Não encontramos eventos relacionados a “${escapeHtml(cleanedQuery)}”. Tente outra palavra.</p></div>`;
+    } else {
+      const label = matches.length === 1 ? '1 evento encontrado' : `${matches.length} eventos encontrados`;
+      results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">RESULTADO DA PESQUISA</span><h2>“${escapeHtml(cleanedQuery)}”</h2><p>Eventos relacionados, em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    }
+    if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function renderWelcome() {
     setUrlFilter(currentMode, '');
     if (roleConfig[currentMode]) {
@@ -290,6 +344,7 @@
   dateForm.addEventListener('submit', event => { event.preventDefault(); if (dateInput.reportValidity()) renderDate(dateInput.value, true); });
   personForm.addEventListener('submit', event => { event.preventDefault(); if (personSelect.reportValidity()) renderPerson(currentMode, personSelect.value, true); });
   cityForm.addEventListener('submit', event => { event.preventDefault(); if (citySelect.reportValidity()) renderCity(citySelect.value, true); });
+  keywordForm.addEventListener('submit', event => { event.preventDefault(); if (keywordInput.reportValidity()) renderSearch(keywordInput.value, true); });
   subjectList.addEventListener('click', event => {
     const button = event.target.closest('[data-subject]');
     if (button) renderSubject(button.dataset.subject, true);
@@ -309,7 +364,10 @@
   const initialCity = params.get('cidade');
   const initialSubject = params.get('assunto');
   const initialDate = params.get('data');
-  if (roleConfig[initialRole] && namesByRole[initialRole].includes(initialPerson)) {
+  const initialSearch = params.get('busca');
+  if (initialSearch && initialSearch.trim().length >= 2) {
+    renderSearch(initialSearch);
+  } else if (roleConfig[initialRole] && namesByRole[initialRole].includes(initialPerson)) {
     setMode(initialRole, false, initialPerson);
     renderPerson(initialRole, initialPerson);
   } else if (cities.includes(initialCity)) {
