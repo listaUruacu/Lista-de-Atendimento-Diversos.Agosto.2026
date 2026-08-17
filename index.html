@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#183f32">
-  <meta name="description" content="Consulta da Agenda Regional Uruaçu por data, responsável ou cidade.">
+  <meta name="description" content="Consulta da Agenda Regional Uruaçu por data, responsável, cidade ou assunto.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Agenda Uruaçu">
@@ -21,7 +21,7 @@
       <div class="hero-copy">
         <p class="eyebrow">Congregação Cristã no Brasil</p>
         <h1>Agenda Regional Uruaçu</h1>
-        <p class="subtitle">Consulte por data, responsável ou cidade.</p>
+        <p class="subtitle">Consulte por data, responsável, cidade ou assunto.</p>
         <p class="update-badge">
           <span class="update-dot" aria-hidden="true"></span>
           Última atualização: <time datetime="2026-08">Agosto de 2026</time>
@@ -53,6 +53,9 @@
         </button>
         <button type="button" class="mode-button" data-mode="city" aria-pressed="false">
           <span aria-hidden="true">⌖</span> Por cidade
+        </button>
+        <button type="button" class="mode-button" data-mode="subject" aria-pressed="false">
+          <span aria-hidden="true">#</span> Por assunto
         </button>
       </div>
 
@@ -89,6 +92,11 @@
           </button>
         </div>
       </form>
+
+      <div id="subject-form" class="subject-form" hidden>
+        <p class="subject-label">Escolha um assunto</p>
+        <div id="subject-list" class="subject-list" aria-label="Lista de assuntos"></div>
+      </div>
 
       <div id="date-actions" class="quick-actions" aria-label="Atalhos de navegação">
         <button type="button" data-shift="-1">← Dia anterior</button>
