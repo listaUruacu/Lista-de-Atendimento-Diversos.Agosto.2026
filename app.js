@@ -20,10 +20,9 @@
   const personLabel = document.querySelector('#person-label');
   const personSubmit = personForm.querySelector('button[type="submit"]');
   const dateActions = document.querySelector('#date-actions');
-  const searchTitle = document.querySelector('#search-title');
   const results = document.querySelector('#results');
   const total = document.querySelector('#event-total');
-  let currentMode = 'date';
+  let currentMode = 'subject';
 
   total.textContent = events.length;
 
@@ -191,12 +190,8 @@
     cityForm.hidden = !isCity;
     subjectForm.hidden = !isSubject;
 
-    if (isDate) searchTitle.textContent = 'Qual data você deseja consultar?';
-    if (isCity) searchTitle.textContent = 'Qual cidade você deseja consultar?';
-    if (isSubject) searchTitle.textContent = 'Qual assunto você deseja consultar?';
     if (isPerson) {
       const config = roleConfig[currentMode];
-      searchTitle.textContent = `Qual ${config.singular} você deseja consultar?`;
       personLabel.textContent = `Nome do ${config.singular}`;
       fillPersonOptions(currentMode, selected);
     }
@@ -280,7 +275,7 @@
         button.classList.remove('is-active');
         button.setAttribute('aria-pressed', 'false');
       });
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">#</div><h2>Consulte por assunto</h2><p>Escolha um dos ${subjects.length} assuntos acima para ver todos os eventos relacionados.</p></div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">☷</div><h2>Consulte por assunto</h2><p>Escolha um dos ${subjects.length} assuntos acima para ver todos os eventos relacionados.</p></div>`;
       return;
     }
     dateInput.value = '';
@@ -324,7 +319,7 @@
     setMode('date', false);
     renderDate(initialDate);
   } else {
-    setMode('date', false);
+    setMode('subject', false);
     renderWelcome();
   }
 })();

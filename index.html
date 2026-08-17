@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#183f32">
-  <meta name="description" content="Consulta da Agenda Regional Uruaçu por data, responsável, cidade ou assunto.">
+  <meta name="description" content="Consulta da Lista de Atendimentos Diversos - Regional Uruaçu por data, responsável, cidade ou assunto.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Agenda Uruaçu">
-  <title>Agenda Regional Uruaçu</title>
+  <meta name="apple-mobile-web-app-title" content="Atendimentos Uruaçu">
+  <title>Lista de Atendimentos Diversos - Regional Uruaçu</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -17,11 +17,11 @@
 <body>
   <main class="app-shell">
     <header class="hero">
-      <div class="hero-mark" aria-hidden="true">AU</div>
+      <img class="hero-mark" src="icon.svg" alt="" aria-hidden="true">
       <div class="hero-copy">
         <p class="eyebrow">Congregação Cristã no Brasil</p>
-        <h1>Agenda Regional Uruaçu</h1>
-        <p class="subtitle">Consulte por data, responsável, cidade ou assunto.</p>
+        <h1>Lista de Atendimentos Diversos - Regional Uruaçu</h1>
+        <p class="subtitle">Consulte por assunto, ancião, diácono, encarregado, cidade ou data.</p>
         <p class="update-badge">
           <span class="update-dot" aria-hidden="true"></span>
           Última atualização: <time datetime="2026-08">Agosto de 2026</time>
@@ -33,33 +33,34 @@
       <div class="panel-heading">
         <div>
           <p class="step-label">CONSULTA</p>
-          <h2 id="search-title">Como você deseja consultar?</h2>
+          <h2 id="search-title">O que você deseja consultar?</h2>
+          <p class="panel-description">Consulte por assunto, ancião, diácono, encarregado, cidade ou data.</p>
         </div>
-        <span class="database-badge"><strong id="event-total">53</strong> registros</span>
+        <span class="database-badge"><strong id="event-total">53</strong> eventos cadastrados</span>
       </div>
 
       <div class="search-modes" role="group" aria-label="Tipo de consulta">
-        <button type="button" class="mode-button is-active" data-mode="date" aria-pressed="true">
-          <span aria-hidden="true">▦</span> Por data
+        <button type="button" class="mode-button is-active" data-mode="subject" aria-pressed="true">
+          <span aria-hidden="true">☷</span> Assunto
         </button>
         <button type="button" class="mode-button" data-mode="elder" aria-pressed="false">
-          <span aria-hidden="true">♙</span> Por ancião
-        </button>
-        <button type="button" class="mode-button" data-mode="worker" aria-pressed="false">
-          <span aria-hidden="true">♧</span> Por encarregado
+          <span aria-hidden="true">♙</span> Ancião
         </button>
         <button type="button" class="mode-button" data-mode="deacon" aria-pressed="false">
-          <span aria-hidden="true">♢</span> Por diácono
+          <span aria-hidden="true">♢</span> Diácono
+        </button>
+        <button type="button" class="mode-button" data-mode="worker" aria-pressed="false">
+          <span aria-hidden="true">♧</span> Encarregado
         </button>
         <button type="button" class="mode-button" data-mode="city" aria-pressed="false">
-          <span aria-hidden="true">⌖</span> Por cidade
+          <span aria-hidden="true">⌖</span> Cidade
         </button>
-        <button type="button" class="mode-button" data-mode="subject" aria-pressed="false">
-          <span aria-hidden="true">#</span> Por assunto
+        <button type="button" class="mode-button" data-mode="date" aria-pressed="false">
+          <span aria-hidden="true">▦</span> Data
         </button>
       </div>
 
-      <form id="date-form" class="date-form">
+      <form id="date-form" class="date-form" hidden>
         <label for="event-date">Data do evento</label>
         <div class="date-controls">
           <input id="event-date" name="event-date" type="date" min="2026-08-08" max="2026-10-18" required>
@@ -93,7 +94,7 @@
         </div>
       </form>
 
-      <div id="subject-form" class="subject-form" hidden>
+      <div id="subject-form" class="subject-form">
         <p class="subject-label">Escolha um assunto</p>
         <div id="subject-list" class="subject-list" aria-label="Lista de assuntos"></div>
       </div>
