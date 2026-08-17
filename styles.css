@@ -357,7 +357,11 @@ footer p { margin: 0; }
     white-space: nowrap;
   }
 
-  .mode-button[data-mode="date"] { grid-column: 2; }
+  .mode-button[data-mode="date"] {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 160px;
+  }
 
   .date-form label, .subject-label, .keyword-form label { margin-bottom: 10px; text-align: center; }
   .date-controls { grid-template-columns: 1fr; }

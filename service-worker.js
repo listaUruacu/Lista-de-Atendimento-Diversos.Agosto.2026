@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agenda-uruacu-v20';
+const CACHE_NAME = 'agenda-uruacu-v21';
 const APP_FILES = [
   './',
   './index.html',
