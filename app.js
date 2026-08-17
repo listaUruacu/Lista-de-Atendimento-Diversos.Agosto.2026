@@ -323,6 +323,17 @@
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  function nearbyDatesHtml() {
+    const distinctDates = [...new Set(events.map(event => event.date))];
+    const today = toInputDate(new Date());
+    let recentDates = distinctDates.filter(date => date <= today).slice(-3);
+    let nextDates = distinctDates.filter(date => date > today).slice(0, 3);
+    if (recentDates.length < 3) nextDates = distinctDates.filter(date => date > today).slice(0, 6 - recentDates.length);
+    if (nextDates.length < 3) recentDates = distinctDates.filter(date => date <= today).slice(-(6 - nextDates.length));
+    const nearbyDates = [...recentDates, ...nextDates];
+    return `<div class="upcoming"><h3>Últimas e próximas datas com eventos</h3><div class="date-chips">${nearbyDates.map(date => `<button class="date-chip" type="button" data-date="${date}">${formatDate(date, false)}</button>`).join('')}</div></div>`;
+  }
+
   function renderWelcome() {
     setUrlFilter(currentMode, '');
     if (roleConfig[currentMode]) {
@@ -332,11 +343,11 @@
       const message = count
         ? `Selecione ${config.selection} ${count} ${config.plural} ${config.found} no documento para ver todos os seus atendimentos.`
         : `O documento atual menciona a função, mas não informa nomes de ${config.plural}. O filtro já está preparado para futuras listas.`;
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">${config.icon}</div><h2>${title}</h2><p>${message}</p></div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">${config.icon}</div><h2>${title}</h2><p>${message}</p>${nearbyDatesHtml()}</div>`;
       return;
     }
     if (currentMode === 'city') {
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">⌖</div><h2>Consulte por cidade</h2><p>Selecione uma das ${cities.length} cidades ou localidades identificadas no documento.</p></div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">⌖</div><h2>Consulte por cidade</h2><p>Selecione uma das ${cities.length} cidades ou localidades identificadas no documento.</p>${nearbyDatesHtml()}</div>`;
       return;
     }
     if (currentMode === 'subject') {
@@ -344,18 +355,11 @@
         button.classList.remove('is-active');
         button.setAttribute('aria-pressed', 'false');
       });
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">☷</div><h2>Consulte por assunto</h2><p>Escolha um dos ${subjects.length} assuntos acima para ver todos os eventos relacionados.</p></div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">☷</div><h2>Consulte por assunto</h2><p>Escolha um dos ${subjects.length} assuntos acima para ver todos os eventos relacionados.</p>${nearbyDatesHtml()}</div>`;
       return;
     }
     dateInput.value = '';
-    const distinctDates = [...new Set(events.map(event => event.date))];
-    const today = toInputDate(new Date());
-    let recentDates = distinctDates.filter(date => date <= today).slice(-3);
-    let nextDates = distinctDates.filter(date => date > today).slice(0, 3);
-    if (recentDates.length < 3) nextDates = distinctDates.filter(date => date > today).slice(0, 6 - recentDates.length);
-    if (nextDates.length < 3) recentDates = distinctDates.filter(date => date <= today).slice(-(6 - nextDates.length));
-    const nearbyDates = [...recentDates, ...nextDates];
-    results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">▦</div><h2>Agenda pronta para consulta</h2><p>Consulte por assunto, ancião, diácono, encarregado, examinadora, cidade, avisos ou data.</p><div class="upcoming"><h3>Últimas e próximas datas com eventos</h3><div class="date-chips">${nearbyDates.map(date => `<button class="date-chip" type="button" data-date="${date}">${formatDate(date, false)}</button>`).join('')}</div></div></div>`;
+    results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">▦</div><h2>Agenda pronta para consulta</h2><p>Consulte por assunto, ancião, diácono, encarregado, examinadora, cidade, avisos ou data.</p>${nearbyDatesHtml()}</div>`;
   }
 
   document.querySelectorAll('.mode-button').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
