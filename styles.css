@@ -147,6 +147,8 @@ h1 { margin-bottom: 5px; font-family: Georgia, serif; font-size: clamp(29px, 5vw
   box-shadow: 0 5px 12px rgba(24, 63, 50, .18);
 }
 
+.date-mode-slot { display: contents; }
+
 .date-form label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
 .date-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
 
@@ -357,11 +359,15 @@ footer p { margin: 0; }
     white-space: nowrap;
   }
 
-  .mode-button[data-mode="date"] {
+  .date-mode-slot {
+    display: flex;
     grid-column: 1 / -1;
-    justify-self: center;
-    width: 160px;
+    justify-content: center;
+    width: 100%;
   }
+
+
+  .mode-button[data-mode="date"] { width: 160px; }
 
   .date-form label, .subject-label, .keyword-form label { margin-bottom: 10px; text-align: center; }
   .date-controls { grid-template-columns: 1fr; }
