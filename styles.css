@@ -251,7 +251,15 @@ select { cursor: pointer; }
   background: var(--green-900);
   text-align: center;
 }
-.event-time strong { font-family: Georgia, serif; font-size: 22px; font-weight: 500; }
+.event-time .event-weekday {
+  margin: 0 0 8px;
+  color: rgba(255,255,255,.88);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: .06em;
+}
+.event-time strong { font-family: Georgia, serif; font-size: 22px; font-weight: 500; line-height: 1; }
 .event-time span { margin-top: 4px; color: rgba(255,255,255,.72); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
 
 .event-content { padding: 20px 22px; }
@@ -326,7 +334,7 @@ footer p { margin: 0; }
 
   .search-modes {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1.08fr .96fr .96fr;
     width: 100%;
     gap: 6px;
     margin-bottom: 24px;
@@ -334,9 +342,9 @@ footer p { margin: 0; }
   }
 
   .mode-button {
-    min-height: 40px;
-    padding: 8px 4px;
-    font-size: 12px;
+    min-height: 44px;
+    padding: 9px 3px;
+    font-size: 13px;
     white-space: nowrap;
   }
 
@@ -350,7 +358,7 @@ footer p { margin: 0; }
   .results-heading { display: block; margin-bottom: 14px; text-align: center; }
   .results-heading h2 { font-size: 25px; }
   .count-pill { display: inline-block; margin-top: 8px; }
-  .event-card { grid-template-columns: 72px minmax(0, 1fr); }
+  .event-card { grid-template-columns: 82px minmax(0, 1fr); }
   .event-content { padding: 17px 16px; }
   .event-time { min-height: 146px; }
   footer { display: block; text-align: center; }

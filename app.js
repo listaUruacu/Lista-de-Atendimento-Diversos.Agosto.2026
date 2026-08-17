@@ -54,6 +54,14 @@
     ).format(date);
   }
 
+  function formatWeekday(value) {
+    const date = parseDate(value);
+    if (!date) return '';
+    return new Intl.DateTimeFormat('pt-BR', { weekday: 'long' })
+      .format(date)
+      .toLocaleUpperCase('pt-BR');
+  }
+
   function titleCaseFirst(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
@@ -143,16 +151,14 @@
 
   function eventCard(event, showDate = false) {
     const time = event.time || '—';
-    const primary = showDate ? formatDate(event.date, false) : time;
-    const secondary = showDate
-      ? (event.time ? `${event.time} h` : 'sem horário')
-      : (event.time ? 'horário' : 'não informado');
+    const weekday = formatWeekday(event.date);
+    const timeLabel = event.time ? 'horário' : 'não informado';
     const dateLine = showDate
       ? `<p><strong>Data:</strong> ${escapeHtml(titleCaseFirst(formatDate(event.date)))}${event.time ? `, às ${escapeHtml(event.time)}` : ''}</p>`
       : '';
     return `
       <article class="event-card">
-        <div class="event-time"><strong>${escapeHtml(primary)}</strong><span>${escapeHtml(secondary)}</span></div>
+        <div class="event-time"><span class="event-weekday">${escapeHtml(weekday)}</span><strong>${escapeHtml(time)}</strong><span>${escapeHtml(timeLabel)}</span></div>
         <div class="event-content">
           <span class="event-category">${escapeHtml(event.category)}</span>
           <h3>${escapeHtml(event.location)}</h3>
