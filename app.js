@@ -5,9 +5,10 @@
     a.date.localeCompare(b.date) || (a.time || '99:99').localeCompare(b.time || '99:99')
   );
   const roleConfig = {
-    elder: { singular: 'ancião', plural: 'anciães', heading: 'AGENDA DO ANCIÃO' },
-    worker: { singular: 'encarregado', plural: 'encarregados', heading: 'AGENDA DO ENCARREGADO' },
-    deacon: { singular: 'diácono', plural: 'diáconos', heading: 'AGENDA DO DIÁCONO' }
+    elder: { singular: 'ancião', plural: 'anciães', heading: 'AGENDA DO ANCIÃO', article: 'um', selection: 'um dos', none: 'Nenhum', named: 'nomeado', identified: 'identificado', found: 'encontrados', of: 'do', icon: '♙' },
+    worker: { singular: 'encarregado', plural: 'encarregados', heading: 'AGENDA DO ENCARREGADO', article: 'um', selection: 'um dos', none: 'Nenhum', named: 'nomeado', identified: 'identificado', found: 'encontrados', of: 'do', icon: '♧' },
+    deacon: { singular: 'diácono', plural: 'diáconos', heading: 'AGENDA DO DIÁCONO', article: 'um', selection: 'um dos', none: 'Nenhum', named: 'nomeado', identified: 'identificado', found: 'encontrados', of: 'do', icon: '♢' },
+    examiner: { singular: 'examinadora', plural: 'examinadoras', heading: 'AGENDA DA EXAMINADORA', article: 'uma', selection: 'uma das', none: 'Nenhuma', named: 'nomeada', identified: 'identificada', found: 'encontradas', of: 'da', icon: '♪' }
   };
   const dateForm = document.querySelector('#date-form');
   const personForm = document.querySelector('#person-form');
@@ -91,7 +92,8 @@
     const patterns = {
       elder: /(?:Ancião|Anc\.)\s*:?\s*([^;—]+)/giu,
       worker: /Encs?\.\s*:?\s*([^;—]+)/giu,
-      deacon: /(?:Diác\.?|Diácono)\s*:\s*([^;—]+)/giu
+      deacon: /(?:Diác\.?|Diácono)\s*:\s*([^;—]+)/giu,
+      examiner: /\bExam(?:\.|:)\s*([^;—]+)/giu
     };
     const names = [];
     let match;
@@ -157,8 +159,8 @@
     const placeholder = document.createElement('option');
     placeholder.value = '';
     placeholder.textContent = names.length
-      ? `Selecione um ${config.singular}`
-      : `Nenhum ${config.singular} identificado neste documento`;
+      ? `Selecione ${config.article} ${config.singular}`
+      : `${config.none} ${config.singular} ${config.identified} neste documento`;
     personSelect.appendChild(placeholder);
     names.forEach(name => {
       const option = document.createElement('option');
@@ -218,7 +220,7 @@
 
     if (isPerson) {
       const config = roleConfig[currentMode];
-      personLabel.textContent = `Nome do ${config.singular}`;
+      personLabel.textContent = `Nome ${config.of} ${config.singular}`;
       fillPersonOptions(currentMode, selected);
     }
 
@@ -316,11 +318,11 @@
     if (roleConfig[currentMode]) {
       const config = roleConfig[currentMode];
       const count = namesByRole[currentMode].length;
-      const title = count ? `Consulte a agenda de um ${config.singular}` : `Nenhum ${config.singular} nomeado`;
+      const title = count ? `Consulte a agenda de ${config.article} ${config.singular}` : `${config.none} ${config.singular} ${config.named}`;
       const message = count
-        ? `Selecione um dos ${count} ${config.plural} encontrados no documento para ver todos os seus atendimentos.`
+        ? `Selecione ${config.selection} ${count} ${config.plural} ${config.found} no documento para ver todos os seus atendimentos.`
         : `O documento atual menciona a função, mas não informa nomes de ${config.plural}. O filtro já está preparado para futuras listas.`;
-      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">♙</div><h2>${title}</h2><p>${message}</p></div>`;
+      results.innerHTML = `<div class="welcome-state"><div class="empty-icon" aria-hidden="true">${config.icon}</div><h2>${title}</h2><p>${message}</p></div>`;
       return;
     }
     if (currentMode === 'city') {

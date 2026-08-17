@@ -343,7 +343,7 @@ footer p { margin: 0; }
 
   .search-modes {
     display: grid;
-    grid-template-columns: 1.15fr .925fr .925fr;
+    grid-template-columns: 1.1fr 1.1fr .8fr;
     width: 100%;
     gap: 6px;
     margin-bottom: 24px;
@@ -356,6 +356,8 @@ footer p { margin: 0; }
     font-size: 14px;
     white-space: nowrap;
   }
+
+  .mode-button[data-mode="date"] { grid-column: 2; }
 
   .date-form label, .subject-label, .keyword-form label { margin-bottom: 10px; text-align: center; }
   .date-controls { grid-template-columns: 1fr; }
