@@ -1,10 +1,11 @@
-const CACHE_NAME = 'agenda-uruacu-v30';
+const CACHE_NAME = 'agenda-uruacu-v31';
 const APP_FILES = [
   './',
   './index.html',
-  './styles.css?v=30',
-  './events.js?v=30',
-  './app.js?v=30',
+  './styles.css?v=31',
+  './events.js?v=31',
+  './app.js?v=31',
+  './Lista%20de%20Atendimento%20Diversos%20-%2008.08.2026.pdf',
   './manifest.webmanifest',
   './icon.svg',
   './icon-192.png',

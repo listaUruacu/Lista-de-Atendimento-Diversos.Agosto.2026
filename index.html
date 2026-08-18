@@ -12,7 +12,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=30">
+  <link rel="stylesheet" href="styles.css?v=31">
 </head>
 <body>
   <main class="app-shell">
@@ -21,10 +21,15 @@
       <div class="hero-copy">
         <p class="eyebrow">Congregação Cristã no Brasil</p>
         <h1>Lista de Atendimentos Diversos - Regional Uruaçu</h1>
-        <p class="update-badge">
-          <span class="update-dot" aria-hidden="true"></span>
-          Última reunião: <time datetime="2026-08">Agosto de 2026</time>
-        </p>
+        <div class="hero-actions">
+          <p class="update-badge">
+            <span class="update-dot" aria-hidden="true"></span>
+            Última reunião: <time datetime="2026-08">Agosto de 2026</time>
+          </p>
+          <a class="original-list-link" href="Lista%20de%20Atendimento%20Diversos%20-%2008.08.2026.pdf" target="_blank" rel="noopener">
+            <span aria-hidden="true">▤</span> Acessar lista original (PDF)
+          </a>
+        </div>
       </div>
     </header>
 
@@ -131,11 +136,11 @@
     </footer>
   </main>
 
-  <script src="events.js?v=30"></script>
-  <script src="app.js?v=30"></script>
+  <script src="events.js?v=31"></script>
+  <script src="app.js?v=31"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js?v=30'));
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js?v=31'));
     }
   </script>
 </body>
