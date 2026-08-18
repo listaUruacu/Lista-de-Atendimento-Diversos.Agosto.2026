@@ -8,6 +8,12 @@ COMO ABRIR
 
 O aplicativo funciona sem internet e não exige instalação.
 
+NOVIDADES
+- Cada atendimento agora tem um botão "Compartilhar", para enviar os
+  detalhes por WhatsApp ou outro app.
+- Cada atendimento agora tem um botão "Adicionar ao calendário", que baixa
+  um arquivo .ics para importar no calendário do celular ou computador.
+
 COMO PUBLICAR E INSTALAR NO CELULAR
 1. Publique esta pasta em um serviço de site estático com HTTPS (por exemplo,
    GitHub Pages, Cloudflare Pages, Netlify ou Vercel).

@@ -4,6 +4,7 @@
   const events = window.EVENTS.slice().sort((a, b) =>
     a.date.localeCompare(b.date) || (a.time || '99:99').localeCompare(b.time || '99:99')
   );
+  events.forEach((event, index) => { event.id = index; });
   const roleConfig = {
     elder: { singular: 'ancião', plural: 'anciães', heading: 'AGENDA DO ANCIÃO', article: 'um', selection: 'um dos', none: 'Nenhum', named: 'nomeado', identified: 'identificado', found: 'encontrados', of: 'do', icon: '♙' },
     worker: { singular: 'encarregado', plural: 'encarregados', heading: 'AGENDA DO ENCARREGADO', article: 'um', selection: 'um dos', none: 'Nenhum', named: 'nomeado', identified: 'identificado', found: 'encontrados', of: 'do', icon: '♧' },
@@ -183,8 +184,100 @@
           <span class="event-category">${escapeHtml(event.category)}</span>
           <h3>${escapeHtml(event.location)}</h3>
           <div class="event-meta"><p><strong>Informações:</strong> ${escapeHtml(event.detail)}</p></div>
+          <div class="event-actions">
+            <button type="button" class="event-action" data-action="calendar" data-id="${event.id}"><span aria-hidden="true">⇩</span> Adicionar ao calendário</button>
+            <button type="button" class="event-action" data-action="share" data-id="${event.id}"><span aria-hidden="true">↗</span> Compartilhar</button>
+          </div>
         </div>
       </article>`;
+  }
+
+  function pad2(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  function icsEscape(value) {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\n/g, '\\n');
+  }
+
+  function icsTimestampNow() {
+    const now = new Date();
+    return `${now.getUTCFullYear()}${pad2(now.getUTCMonth() + 1)}${pad2(now.getUTCDate())}T${pad2(now.getUTCHours())}${pad2(now.getUTCMinutes())}${pad2(now.getUTCSeconds())}Z`;
+  }
+
+  function buildIcs(event) {
+    const [year, month, day] = event.date.split('-');
+    const summary = `${event.category} — ${event.location}`;
+    let dtStartLine, dtEndLine;
+
+    if (event.time && /^\d{2}:\d{2}$/.test(event.time)) {
+      const [hour, minute] = event.time.split(':').map(Number);
+      const start = new Date(Number(year), Number(month) - 1, Number(day), hour, minute);
+      const end = new Date(start.getTime() + 60 * 60 * 1000);
+      const stamp = date => `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}T${pad2(date.getHours())}${pad2(date.getMinutes())}00`;
+      dtStartLine = `DTSTART:${stamp(start)}`;
+      dtEndLine = `DTEND:${stamp(end)}`;
+    } else {
+      const start = parseDate(event.date);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      const stamp = date => `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}`;
+      dtStartLine = `DTSTART;VALUE=DATE:${stamp(start)}`;
+      dtEndLine = `DTEND;VALUE=DATE:${stamp(end)}`;
+    }
+
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Agenda Regional Uruacu//PT-BR',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:atendimento-${event.id}@agenda-uruacu`,
+      `DTSTAMP:${icsTimestampNow()}`,
+      dtStartLine,
+      dtEndLine,
+      `SUMMARY:${icsEscape(summary)}`,
+      `DESCRIPTION:${icsEscape(event.detail)}`,
+      `LOCATION:${icsEscape(event.location)}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+      ''
+    ].join('\r\n');
+  }
+
+  function downloadIcs(event) {
+    const blob = new Blob([buildIcs(event)], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `atendimento-${event.date}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function shareText(event) {
+    const readableDate = titleCaseFirst(formatDate(event.date));
+    const timeLabel = event.time ? ` às ${event.time}` : '';
+    return `${event.category} — ${event.location}\n${readableDate}${timeLabel}\n${event.detail}`;
+  }
+
+  async function shareEvent(event) {
+    const text = shareText(event);
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: event.category, text });
+      } catch (_) {
+        // Usuário cancelou o compartilhamento.
+      }
+      return;
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   }
 
   function setUrlFilter(mode, value) {
@@ -378,7 +471,16 @@
   }));
   document.querySelector('#today-button').addEventListener('click', () => renderDate(toInputDate(new Date())));
   document.querySelector('#clear-button').addEventListener('click', renderWelcome);
-  results.addEventListener('click', event => { const button = event.target.closest('[data-date]'); if (button) renderDate(button.dataset.date); });
+  results.addEventListener('click', event => {
+    const dateButton = event.target.closest('[data-date]');
+    if (dateButton) { renderDate(dateButton.dataset.date); return; }
+    const actionButton = event.target.closest('[data-action]');
+    if (!actionButton) return;
+    const target = events.find(item => item.id === Number(actionButton.dataset.id));
+    if (!target) return;
+    if (actionButton.dataset.action === 'calendar') downloadIcs(target);
+    if (actionButton.dataset.action === 'share') shareEvent(target);
+  });
 
   const params = new URL(window.location.href).searchParams;
   const initialRole = params.get('funcao');

@@ -304,8 +304,9 @@ select { cursor: pointer; }
   margin-bottom: 9px;
   padding: 4px 8px;
   border-radius: 6px;
-  color: #745a24;
-  background: var(--gold-soft);
+  color: var(--green-900);
+  background: #e3eee9;
+  border: 1px solid #d3e3dc;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: .07em;
@@ -315,6 +316,21 @@ select { cursor: pointer; }
 .event-meta { display: grid; gap: 6px; color: var(--muted); font-size: 14px; }
 .event-meta p { margin: 0; }
 .event-meta strong { color: #3c4743; }
+
+.event-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.event-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--green-900);
+  background: #fbfcfb;
+  font-size: 12px;
+  font-weight: 700;
+}
+.event-action:hover { border-color: #a9bdb4; background: var(--green-100); }
 
 .elder-summary {
   display: inline-flex;
