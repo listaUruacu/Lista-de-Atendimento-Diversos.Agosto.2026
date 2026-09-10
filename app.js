@@ -175,6 +175,9 @@
 
   function eventCard(event) {
     const timeLabel = event.time ? `${event.time} h` : 'sem horário';
+    const attendancePrefix = /^(?:Ancião|Anc\.|Diácono|Diác\.?|Encarregado|Encs?\.|Adm\.?)\s*:\s*/iu;
+    const isAttendance = attendancePrefix.test(event.detail);
+    const detailLabel = isAttendance ? 'Atende:' : 'Informações:';
     return `
       <article class="event-card">
         <div class="event-content">
@@ -183,7 +186,7 @@
             <time class="event-clock" datetime="${escapeHtml(event.time || '')}">${escapeHtml(timeLabel)}</time>
           </div>
           <h3>${escapeHtml(event.location)}</h3>
-          <div class="event-meta"><p><strong>Informações:</strong> ${escapeHtml(event.detail)}</p></div>
+          <div class="event-meta"><p><strong>${detailLabel}</strong> ${escapeHtml(event.detail)}</p></div>
           <div class="event-actions">
             <button type="button" class="event-action" data-action="calendar" data-id="${event.id}"><span aria-hidden="true">⇩</span> Adicionar ao calendário</button>
             <button type="button" class="event-action" data-action="share" data-id="${event.id}"><span aria-hidden="true">↗</span> Compartilhar</button>
