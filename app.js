@@ -174,14 +174,14 @@
   }
 
   function eventCard(event) {
-    const weekday = formatWeekday(event.date);
-    const shortDate = formatDate(event.date, false);
     const timeLabel = event.time ? `${event.time} h` : 'sem horário';
     return `
       <article class="event-card">
-        <div class="event-time"><span class="event-weekday">${escapeHtml(weekday)}</span><strong>${escapeHtml(shortDate)}</strong><span>${escapeHtml(timeLabel)}</span></div>
         <div class="event-content">
-          <span class="event-category">${escapeHtml(event.category)}</span>
+          <div class="event-card-top">
+            <span class="event-category">${escapeHtml(event.category)}</span>
+            <time class="event-clock" datetime="${escapeHtml(event.time || '')}">${escapeHtml(timeLabel)}</time>
+          </div>
           <h3>${escapeHtml(event.location)}</h3>
           <div class="event-meta"><p><strong>Informações:</strong> ${escapeHtml(event.detail)}</p></div>
           <div class="event-actions">
@@ -190,6 +190,65 @@
           </div>
         </div>
       </article>`;
+  }
+
+  function formatMonthHeading(value) {
+    const date = parseDate(value);
+    if (!date) return value;
+    return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' })
+      .format(date)
+      .toLocaleUpperCase('pt-BR');
+  }
+
+  function formatDateHeading(value) {
+    const date = parseDate(value);
+    if (!date) return value;
+    return titleCaseFirst(new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    }).format(date));
+  }
+
+  function formatWeekdayShort(value) {
+    const date = parseDate(value);
+    if (!date) return '';
+    return new Intl.DateTimeFormat('pt-BR', { weekday: 'short' })
+      .format(date)
+      .replace('.', '')
+      .toLocaleUpperCase('pt-BR');
+  }
+
+  function groupedEventList(matches, options = {}) {
+    const showTimeline = options.showTimeline !== false;
+    if (!showTimeline) {
+      return `<div class="event-list event-list-single-date">${matches.map(event => eventCard(event)).join('')}</div>`;
+    }
+
+    const months = new Map();
+    matches.forEach(event => {
+      const monthKey = event.date.slice(0, 7);
+      if (!months.has(monthKey)) months.set(monthKey, new Map());
+      const dates = months.get(monthKey);
+      if (!dates.has(event.date)) dates.set(event.date, []);
+      dates.get(event.date).push(event);
+    });
+
+    return `<div class="event-months">${[...months.entries()].map(([, dates]) => {
+      const firstDate = dates.keys().next().value;
+      return `<section class="event-month">
+        <h3 class="month-heading">${escapeHtml(formatMonthHeading(firstDate))}</h3>
+        <div class="month-dates">${[...dates.entries()].map(([date, dateEvents]) => `
+          <section class="date-group">
+            <div class="date-rail" aria-hidden="true">
+              <div class="date-marker"><span>${escapeHtml(formatWeekdayShort(date))}</span><strong>${escapeHtml(formatDate(date, false))}</strong></div>
+              <span class="date-line"></span>
+            </div>
+            <div class="date-agenda">
+              <h4 class="date-heading">${escapeHtml(formatDateHeading(date))}</h4>
+              <div class="event-list">${dateEvents.map(event => eventCard(event)).join('')}</div>
+            </div>
+          </section>`).join('')}</div>
+      </section>`;
+    }).join('')}</div>`;
   }
 
   function pad2(value) {
@@ -337,7 +396,7 @@
       results.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">✓</div><h2>Nenhum evento nesta data</h2><p>Não há registros para ${escapeHtml(readableDate)}. Use os botões de navegação para consultar outro dia.</p></div>`;
     } else {
       const label = matches.length === 1 ? '1 evento encontrado' : `${matches.length} eventos encontrados`;
-      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada na lista</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada na lista</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches, { showTimeline: false })}`;
     }
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -349,7 +408,7 @@
     setUrlFilter(mode, name);
     const matches = events.filter(event => extractNames(event.detail, mode).includes(name));
     const label = matches.length === 1 ? '1 atendimento' : `${matches.length} atendimentos`;
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">${config.heading}</span><h2>${escapeHtml(name)}</h2><p>Atendimentos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">${config.heading}</span><h2>${escapeHtml(name)}</h2><p>Atendimentos em ordem cronológica</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches)}`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -359,7 +418,7 @@
     setUrlFilter('city', city);
     const matches = events.filter(event => cityFor(event) === city || cityFor(event) === null);
     const label = matches.length === 1 ? '1 evento' : `${matches.length} eventos`;
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA DA LOCALIDADE</span><h2>${escapeHtml(city)}</h2><p>Inclui avisos destinados a toda a regional</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA DA LOCALIDADE</span><h2>${escapeHtml(city)}</h2><p>Inclui avisos destinados a toda a regional</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches)}`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -373,7 +432,7 @@
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA POR ASSUNTO</span><h2>${escapeHtml(subject)}</h2><p>Eventos em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AGENDA POR ASSUNTO</span><h2>${escapeHtml(subject)}</h2><p>Eventos em ordem cronológica</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches)}`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -381,7 +440,7 @@
     const matches = events.filter(event => event.category === 'Avisos à irmandade');
     setUrlFilter('notice', '1');
     const label = matches.length === 1 ? '1 aviso' : `${matches.length} avisos`;
-    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AVISOS À IRMANDADE</span><h2>Avisos</h2><p>Comunicados em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+    results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">AVISOS À IRMANDADE</span><h2>Avisos</h2><p>Comunicados em ordem cronológica</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches)}`;
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -411,7 +470,7 @@
       results.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">⌕</div><h2>Nenhum evento encontrado</h2><p>Não encontramos eventos relacionados a “${escapeHtml(cleanedQuery)}”. Tente outra palavra.</p></div>`;
     } else {
       const label = matches.length === 1 ? '1 evento encontrado' : `${matches.length} eventos encontrados`;
-      results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">RESULTADO DA PESQUISA</span><h2>“${escapeHtml(cleanedQuery)}”</h2><p>Eventos relacionados, em ordem cronológica</p></div><span class="count-pill">${label}</span></div><div class="event-list">${matches.map(event => eventCard(event)).join('')}</div>`;
+      results.innerHTML = `<div class="results-heading"><div><span class="elder-summary">RESULTADO DA PESQUISA</span><h2>“${escapeHtml(cleanedQuery)}”</h2><p>Eventos relacionados, em ordem cronológica</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches)}`;
     }
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
