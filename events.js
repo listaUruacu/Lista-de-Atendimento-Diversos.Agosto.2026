@@ -45,7 +45,7 @@ window.EVENTS = [
   {date:'2026-09-27',time:'15:00',category:'Reuniões diversas',location:'Ceres - Central',detail:'Reunião com porteiros, operadores de som e irmãs auxiliares da porta'},
   {date:'2026-09-27',time:'',category:'Avisos à irmandade',location:'Todas as congregações da regional',detail:'Coleta especial para Anexo Uruaçu. Chave Pix: ccbanexo@gmail.com'},
   {date:'2026-10-09',time:'19:30',category:'Reuniões diversas',location:'Uruaçu - Central',detail:'Reunião com as coordenações da Regional Uruaçu'},
-  {date:'2026-10-10',time:'08:00',category:'Avisos à irmandade',location:'Uruaçu - Central',detail:'Exames médicos para emissão de ASO — administrações de Ceres, Carmo do Rio Verde e Rubiataba'},
+  {date:'2026-10-10',time:'08:00',category:'Avisos à irmandade',location:'Uruaçu - Central',detail:'Exames médicos para emissão de ASO — administrações de Ceres, Campinorte, Carmo do Rio Verde e Rubiataba'},
   {date:'2026-10-10',time:'08:30',category:'Reuniões diversas',location:'Uruaçu - Central',detail:'RRM - Reunião Regional Ministerial — anciães e diáconos'},
   {date:'2026-10-10',time:'10:00',category:'Reuniões diversas',location:'Uruaçu - Central',detail:'RRM - Reunião Regional Ministerial — anciães, diáconos, cooperadores e cooperadores de jovens e menores'},
   {date:'2026-10-11',time:'09:00',category:'Ensaios regionais',location:'Mara Rosa - Central',detail:'Anc.: Nilton José; Enc.: Tiago Caetano; Enc.: Wesley Ferreira'},
