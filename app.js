@@ -26,9 +26,79 @@
   const dateActions = document.querySelector('#date-actions');
   const results = document.querySelector('#results');
   const total = document.querySelector('#event-total');
+  const installButton = document.querySelector('#install-app');
+  const installGuide = document.querySelector('#install-guide');
+  const installGuideText = document.querySelector('#install-guide-text');
+  const closeInstallGuide = document.querySelector('#close-install-guide');
+  const confirmInstallGuide = document.querySelector('#confirm-install-guide');
+  let deferredInstallPrompt = null;
+  let installReturnFocus = null;
   let currentMode = 'subject';
 
   total.textContent = events.length;
+
+  function isInstalledApp() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function isMobileDevice() {
+    return window.matchMedia('(max-width: 720px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  function updateInstallButton() {
+    installButton.hidden = isInstalledApp() || (!deferredInstallPrompt && !isMobileDevice());
+  }
+
+  function closeInstallInstructions() {
+    installGuide.hidden = true;
+    document.body.classList.remove('install-guide-open');
+    if (installReturnFocus) installReturnFocus.focus();
+  }
+
+  function openInstallInstructions() {
+    const isAppleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    installGuideText.textContent = isAppleMobile
+      ? 'No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.'
+      : 'Abra o menu do navegador (⋮) e escolha “Instalar aplicativo” ou “Adicionar à tela inicial”.';
+    installReturnFocus = document.activeElement;
+    installGuide.hidden = false;
+    document.body.classList.add('install-guide-open');
+    closeInstallGuide.focus();
+  }
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallButton();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    updateInstallButton();
+  });
+
+  installButton.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) {
+      openInstallInstructions();
+      return;
+    }
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    if (choice.outcome === 'accepted') installButton.hidden = true;
+    else updateInstallButton();
+  });
+
+  closeInstallGuide.addEventListener('click', closeInstallInstructions);
+  confirmInstallGuide.addEventListener('click', closeInstallInstructions);
+  installGuide.addEventListener('click', event => {
+    if (event.target === installGuide) closeInstallInstructions();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !installGuide.hidden) closeInstallInstructions();
+  });
+  window.addEventListener('resize', updateInstallButton);
+  updateInstallButton();
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>'"]/g, char => ({
@@ -177,7 +247,7 @@
     const timeLabel = event.time ? `${event.time} h` : 'sem horário';
     const attendancePrefix = /^(?:Ancião|Anc\.|Diácono|Diác\.?|Encarregado|Encs?\.|Adm\.?)\s*:\s*/iu;
     const isAttendance = attendancePrefix.test(event.detail);
-    const detailLabel = isAttendance ? 'Atende:' : 'Informações:';
+    const detailLabel = isAttendance ? 'Atende:' : 'Assunto:';
     return `
       <article class="event-card">
         <div class="event-content">
@@ -222,6 +292,8 @@
 
   function groupedEventList(matches, options = {}) {
     const showTimeline = options.showTimeline !== false;
+    const showMonthHeading = options.showMonthHeading !== false;
+    const showDateHeading = options.showDateHeading !== false;
     if (!showTimeline) {
       return `<div class="event-list event-list-single-date">${matches.map(event => eventCard(event)).join('')}</div>`;
     }
@@ -238,7 +310,7 @@
     return `<div class="event-months">${[...months.entries()].map(([, dates]) => {
       const firstDate = dates.keys().next().value;
       return `<section class="event-month">
-        <h3 class="month-heading">${escapeHtml(formatMonthHeading(firstDate))}</h3>
+        ${showMonthHeading ? `<h3 class="month-heading">${escapeHtml(formatMonthHeading(firstDate))}</h3>` : ''}
         <div class="month-dates">${[...dates.entries()].map(([date, dateEvents]) => `
           <section class="date-group">
             <div class="date-rail" aria-hidden="true">
@@ -246,7 +318,7 @@
               <span class="date-line"></span>
             </div>
             <div class="date-agenda">
-              <h4 class="date-heading">${escapeHtml(formatDateHeading(date))}</h4>
+              ${showDateHeading ? `<h4 class="date-heading">${escapeHtml(formatDateHeading(date))}</h4>` : ''}
               <div class="event-list">${dateEvents.map(event => eventCard(event)).join('')}</div>
             </div>
           </section>`).join('')}</div>
@@ -399,7 +471,7 @@
       results.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">✓</div><h2>Nenhum evento nesta data</h2><p>Não há registros para ${escapeHtml(readableDate)}. Use os botões de navegação para consultar outro dia.</p></div>`;
     } else {
       const label = matches.length === 1 ? '1 evento encontrado' : `${matches.length} eventos encontrados`;
-      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada na lista</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches, { showTimeline: false })}`;
+      results.innerHTML = `<div class="results-heading"><div><h2>${escapeHtml(readableDate)}</h2><p>Programação registrada na lista</p></div><span class="count-pill">${label}</span></div>${groupedEventList(matches, { showMonthHeading: false, showDateHeading: false })}`;
     }
     if (scroll) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
